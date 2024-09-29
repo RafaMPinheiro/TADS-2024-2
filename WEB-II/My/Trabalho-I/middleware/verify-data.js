@@ -1,17 +1,17 @@
 const verifyData = (req, res, next) => {
-  try {
-    const body = req.body;
+	try {
+		const { nome, hobby } = req.body;
 
-    if (!body.nome || !body.hobby) {
-      const error = new Error("Está faltando dados!");
-      error.status = 401;
-      throw error;
-    }
+		if (!nome || !hobby) {
+			const error = new Error("Os dados devem conter nome e hobby!");
+			error.status = 400;
+			throw error;
+		}
 
-    next();
-  } catch (error) {
-    next(error);
-  }
+		next();
+	} catch (error) {
+		next(error);
+	}
 };
 
 module.exports = verifyData;
