@@ -1,0 +1,19 @@
+meta {
+  name: Rota 4
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:3333/dados?id=2
+  body: none
+  auth: none
+}
+
+params:query {
+  id: 2
+}
+
+headers {
+  authorization: Bearer auth
+}
