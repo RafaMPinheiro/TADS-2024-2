@@ -1,0 +1,37 @@
+@apiurl = http://localhost:3333/
+
+### Rota 1
+GET {{apiurl}} HTTP/1.1
+
+### Rota 2
+GET {{apiurl}}rota-dinamica/rafael HTTP/1.1
+Authorization: Bearer token
+
+### Rota 3
+GET {{apiurl}}rota-dinamica/rafael HTTP/1.1
+
+### Rota 4
+GET {{apiurl}}dados?id=2 HTTP/1.1
+Authorization: Bearer token
+
+### Rota 5
+POST {{apiurl}}dados HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer token
+
+{ 
+  "nome": "João",
+  "hobby": "Nadar"
+}
+
+### Rota 6
+POST {{apiurl}}dados HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer token
+
+{ 
+  "nome": "João"
+}
+
+### Rota 7
+GET {{apiurl}}dados HTTP/1.1
