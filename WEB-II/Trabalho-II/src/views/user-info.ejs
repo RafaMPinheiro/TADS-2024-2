@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+      <a
+        href="/users"
+        class="absolute left-5 top-6 text-white hover:text-gray-200"
+      >
+        <i data-lucide="arrow-left" class="size-6"></i>
+      </a>
+      <h1 class="text-center text-3xl font-semibold">User Details</h1>
+    </header>
+
+    <div class="container mx-auto mt-8 px-4">
+      <div class="bg-white shadow-md rounded-lg p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-semibold">
+            User: <span class="text-blue-600"><%= user.name %></span>
+          </h2>
+          <a
+            href="/updateUser/<%= user.id %>"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Edit User
+          </a>
+        </div>
+
+        <div class="mt-4 text-gray-600 space-y-2">
+          <p><strong>ID:</strong> <%= user.id %></p>
+          <p><strong>CPF:</strong> <%= user.cpf %></p>
+          <p><strong>Role:</strong> <%= user.role %></p>
+        </div>
+
+        <% if (user.role === 'CLIENTE') { %>
+        <div class="flex justify-end mt-6">
+          <form
+            action="/deleteUser/<%= user.id %>"
+            method="POST"
+            onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');"
+          >
+            <button
+              type="submit"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Delete User
+            </button>
+          </form>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white shadow-md rounded-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-700 mb-4">Phones</h3>
+          <table class="w-full table-auto">
+            <tbody class="text-gray-600 text-sm font-light">
+              <% phones.forEach(phone => { %>
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="py-3 px-6"><%= phone.phone %></td>
+                <td class="flex justify-end gap-3 py-3 px-3">
+                  <form
+                    id="phone-form-<%= phone.id %>"
+                    action="/phones/updateMainPhone"
+                    method="POST"
+                  >
+                    <input
+                      type="text"
+                      name="userId"
+                      value="<%= user.id %>"
+                      class="hidden"
+                    />
+                    <input type="radio" id="phone-<%= phone.id %>" name="phone"
+                    value="<%= phone.id %>" <%= phone.main === 1 ? 'checked' :
+                    '' %> onchange="this.form.submit()" />
+                  </form>
+
+                  <form action="/phones/deletePhone/<%= phone.id %>" method="POST">
+                    <button type="submit">
+                      <i
+                        data-lucide="trash"
+                        class="size-4 cursor-pointer hover:text-red-500"
+                      ></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+
+          <form action="/phones/addPhone" method="POST" class="mt-4">
+            <input type="hidden" name="userId" value="<%= user.id %>" />
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="phone"
+                >Novo Telefone</label
+              >
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                placeholder="Digite o novo telefone"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Adicionar Telefone
+            </button>
+          </form>
+        </div>
+
+        <div class="bg-white shadow-md rounded-lg p-6">
+          <h3 class="text-xl font-semibold text-gray-700 mb-4">Emails</h3>
+          <table class="w-full table-auto">
+            <tbody class="text-gray-600 text-sm font-light">
+              <% emails.forEach(email => { %>
+              <tr class="border-b border-gray-200 hover:bg-gray-100">
+                <td class="py-3 px-6"><%= email.email %></td>
+                <td class="flex justify-end gap-3 py-3 px-3">
+                  <form
+                    id="email-form-<%= email.id %>"
+                    action="/emails/updateMainEmail"
+                    method="POST"
+                  >
+                    <input type="hidden" name="userId" value="<%= user.id %>" />
+                    <input type="radio" id="email-<%= email.id %>" name="email"
+                    value="<%= email.id %>" <%= email.main === 1 ? 'checked' :
+                    '' %> onchange="this.form.submit()" />
+                  </form>
+
+                  <form action="/emails/deleteEmail/<%= email.id %>" method="POST">
+                    <button type="submit">
+                      <i
+                        data-lucide="trash"
+                        class="size-4 cursor-pointer hover:text-red-500"
+                      ></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+
+          <form action="/emails/addEmail" method="POST" class="mt-4">
+            <input type="hidden" name="userId" value="<%= user.id %>" />
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="email"
+                >Novo E-mail</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Digite o novo e-mail"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Adicionar E-mail
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trabalho 2 - <%= title %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+      <a
+        href="/users"
+        class="absolute left-5 top-6 text-white hover:text-gray-200"
+      >
+        <i data-lucide="arrow-left" class="size-6"></i>
+      </a>
+      <h1 class="text-center text-3xl font-semibold"><%= title %></h1>
+    </header>
+
+    <div class="container mx-auto mt-8">
+      <div class="bg-white shadow-md rounded px-8 py-6 mb-4">
+        <form action="<%= action %>" method="POST">
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="name"
+            >
+              Nome
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Insira seu name"
+              value="<%= user ? user[0].name : '' %>"
+              required
+            />
+          </div>
+
+          <% if (method !== 'UPDATE') { %>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="cpf">
+              CPF
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="cpf"
+              type="text"
+              name="cpf"
+              placeholder="Insira seu CPF"
+              required
+            />
+          </div>
+          <% } %>
+
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="password"
+            >
+              Senha
+            </label>
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Insira sua senha"
+              value="<%= user ? user[0].password : '' %>"
+              required
+            />
+          </div>
+
+          <div class="flex items-center justify-between">
+            <button
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              <%= method === 'UPDATE' ? 'Update user' : 'Add user' %>
+            </button>
+            <a
+              href="/users"
+              class="inline-block align-baseline font-bold text-sm text-blue-600 hover:text-blue-800"
+            >
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

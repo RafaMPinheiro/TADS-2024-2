@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trabalho 2 - User CRUD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <header class="bg-blue-600 text-white p-4">
+      <h1 class="text-center text-3xl font-semibold">User Management</h1>
+    </header>
+
+    <div class="container mx-auto mt-8">
+      <div class="flex justify-end mb-4">
+        <a
+          href="/addUser"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Add User
+        </a>
+      </div>
+
+      <div class="bg-white shadow-md rounded my-6">
+        <table class="min-w-full table-auto">
+          <thead>
+            <tr
+              class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+            >
+              <th class="py-3 px-6 text-left">ID</th>
+              <th class="py-3 px-6 text-left">Name</th>
+              <th class="py-3 px-6 text-left">CPF</th>
+              <th class="py-3 px-6 text-left">Email</th>
+              <th class="py-3 px-6 text-left">Phone</th>
+              <th class="py-3 px-6 text-left">Role</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-600 text-sm font-light">
+            <% for(let i=0; i < users.length; i++) { %>
+            <tr class="border-b border-gray-200 hover:bg-gray-100">
+              <td class="py-3 px-6 text-left whitespace-nowrap">
+                <%= users[i].id %>
+              </td>
+              <td class="py-3 px-6 text-left"><%= users[i].name %></td>
+              <td class="py-3 px-6 text-left"><%= users[i].cpf %></td>
+              <td class="py-3 px-6 text-left"><%= users[i].email %></td>
+              <td class="py-3 px-6 text-left"><%= users[i].phone %></td>
+              <td class="py-3 px-6 text-left"><%= users[i].role %></td>
+              <td class="py-3 px-2 text-left">
+                <a href="/user/<%= users[i].id %>">
+                  <i
+                    data-lucide="eye"
+                    class="size-4 cursor-pointer hover:text-blue-500"
+                  ></i>
+                </a>
+              </td>
+              <td class="py-3 px-2 text-left">
+                <% if (users[i].role === 'CLIENTE') { %>
+                <form
+                  action="/deleteUser/<%= users[i].id %>"
+                  method="POST"
+                  onsubmit="return confirm('Tem certeza que deseja deletar este usuário?');"
+                >
+                  <button type="submit">
+                    <i
+                      data-lucide="trash"
+                      class="size-4 cursor-pointer hover:text-red-500"
+                    ></i>
+                  </button>
+                </form>
+                <% } %>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-between items-center mt-4">
+        <span class="text-sm text-gray-600">
+          Showing <%= (currentPage - 1) * 5 + 1 %> to <%= Math.min(currentPage * 5, totalUsers) %> of <%= totalUsers %> entries
+        </span>
+
+        <nav class="inline-flex shadow-sm">
+          <a href="?page=<%= currentPage - 1 %>" class="<%= currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-l-md" <%= currentPage === 1 ? 'disabled' : '' %>>
+            Previous
+          </a>
+
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a
+              href="?page=<%= i %>"
+              class="<%= currentPage === i ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1"
+            >
+              <%= i %>
+            </a>
+          <% } %>
+
+          <a href="?page=<%= currentPage + 1 %>" class="<%= currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-r-md" <%= currentPage === totalPages ? 'disabled' : '' %>>
+            Next
+          </a>
+        </nav>
+      </div>
+    </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
