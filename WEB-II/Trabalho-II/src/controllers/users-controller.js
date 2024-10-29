@@ -45,7 +45,7 @@ function addUserForm(req, res) {
 function addUser(req, res) {
   const userDao = new UserDao();
 
-  const { name, cpf, password, role } = req.body;
+  const { name, cpf, password } = req.body;
 
   // Validação de CPF único
   const existingUser = userDao.getByCPF(cpf);
@@ -54,10 +54,10 @@ function addUser(req, res) {
   }
 
   // Definir perfil automaticamente
-  const userRole = role || (cpf.startsWith("1") ? "ADMIN" : "CLIENTE");
+  const role = cpf.startsWith("1") ? "ADMIN" : "CLIENTE";
 
   // Inserir usuário
-  userDao.save({ name, cpf, password, role: userRole });
+  userDao.save({ name, cpf, password, role });
 
   res.redirect("/users");
 }

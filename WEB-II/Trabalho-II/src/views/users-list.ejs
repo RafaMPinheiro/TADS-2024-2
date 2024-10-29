@@ -12,7 +12,17 @@
     </header>
 
     <div class="container mx-auto mt-8">
-      <div class="flex justify-end mb-4">
+      <div class="flex justify-between mb-4">
+        <form action="/users" method="GET" class="flex">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search by name"
+            class="border border-gray-300 p-2"
+            value="<%= search %>"
+            onchange="this.form.submit()"
+          />
+        </form>        
         <a
           href="/addUser"
           class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -84,23 +94,29 @@
         </span>
 
         <nav class="inline-flex shadow-sm">
-          <a href="?page=<%= currentPage - 1 %>" class="<%= currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-l-md" <%= currentPage === 1 ? 'disabled' : '' %>>
+          <a
+            href="<%= currentPage > 1 ? '?page=' + (currentPage - 1) : '#' %><%= search ? '&search=' + search : '' %>"
+            class="<%= currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-l-md"
+          >
             Previous
           </a>
-
+        
           <% for (let i = 1; i <= totalPages; i++) { %>
             <a
-              href="?page=<%= i %>"
+              href="?page=<%= i %><%= search ? '&search=' + search : '' %>"
               class="<%= currentPage === i ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1"
             >
               <%= i %>
             </a>
           <% } %>
-
-          <a href="?page=<%= currentPage + 1 %>" class="<%= currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-r-md" <%= currentPage === totalPages ? 'disabled' : '' %>>
+        
+          <a
+            href="<%= currentPage < totalPages ? '?page=' + (currentPage + 1) : '#' %><%= search ? '&search=' + search : '' %>"
+            class="<%= currentPage === totalPages ? 'bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none' : 'bg-gray-300 text-gray-800 hover:bg-gray-400' %> px-3 py-1 rounded-r-md"
+          >
             Next
           </a>
-        </nav>
+        </nav>        
       </div>
     </div>
     </div>
