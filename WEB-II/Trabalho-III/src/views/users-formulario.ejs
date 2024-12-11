@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adicionar novo usuário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-zinc-900 text-white flex items-center justify-center min-h-screen"
+  >
+    <div class="w-full max-w-4xl">
+      <div class="bg-zinc-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h1 class="text-4xl font-bold mb-4 text-center">
+          Adicionar novo usuário
+        </h1>
+        <form
+          action="/registrarUsuario"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-4">
+            <label
+              class="block text-zinc-300 text-sm font-bold mb-2"
+              for="avatar"
+            >
+              Avatar
+            </label>
+            <input
+              class="bg-zinc-700 border border-zinc-600 text-zinc-300 rounded w-full py-2 px-3 focus:outline-none focus:shadow-outline"
+              id="avatar"
+              type="file"
+              name="avatar"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              class="block text-zinc-300 text-sm font-bold mb-2"
+              for="name"
+            >
+              Nome
+            </label>
+            <input
+              class="bg-zinc-700 border border-zinc-600 text-zinc-300 rounded w-full py-2 px-3 focus:outline-none focus:shadow-outline"
+              id="name"
+              type="text"
+              name="name"
+              placeholder="Insira seu nome"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              class="block text-zinc-300 text-sm font-bold mb-2"
+              for="email"
+            >
+              Email
+            </label>
+            <input
+              class="bg-zinc-700 border border-zinc-600 text-zinc-300 rounded w-full py-2 px-3 focus:outline-none focus:shadow-outline"
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Insira seu email"
+              required
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              class="block text-zinc-300 text-sm font-bold mb-2"
+              for="password"
+            >
+              Senha
+            </label>
+            <input
+              class="bg-zinc-700 border border-zinc-600 text-zinc-300 rounded w-full py-2 px-3 focus:outline-none focus:shadow-outline"
+              id="password"
+              type="password"
+              name="password"
+              placeholder="Insira sua senha"
+              required
+            />
+          </div>
+
+          <div class="mb-4 flex items-start gap-4">
+            <div class="flex-1">
+              <label
+                class="block text-zinc-300 text-sm font-bold mb-2"
+                for="role"
+              >
+                Role
+              </label>
+              <select
+                class="bg-zinc-700 text-zinc-300 border border-zinc-600 rounded px-2 py-1 w-full"
+                id="role"
+                name="role"
+                required
+              >
+                <% roles.forEach(role => { %>
+                <option value="<%= role %>"><%= role %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="flex-1">
+              <label
+                class="block text-zinc-300 text-sm font-bold mb-2"
+                for="modules"
+              >
+                Módulos
+              </label>
+              <div
+                id="modules"
+                class="bg-zinc-700 border border-zinc-600 rounded p-2"
+              >
+                <% modules.forEach(module => { %>
+                <div class="flex items-center mb-2">
+                  <input type="checkbox" id="module-<%= module.id %>"
+                  name="modules" value="<%= module.id %>" class="mr-2" <%=
+                  module.name === "Perfil" ? "checked" : "" %> />
+                  <label
+                    for="module-<%= module.id %>"
+                    class="text-zinc-300 text-sm"
+                  >
+                    <%= module.name %>
+                  </label>
+                </div>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mt-6">
+            <button
+              class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Adicionar usuário
+            </button>
+            <a
+              href="/home"
+              class="inline-block font-bold text-sm text-blue-600 hover:text-blue-800"
+            >
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

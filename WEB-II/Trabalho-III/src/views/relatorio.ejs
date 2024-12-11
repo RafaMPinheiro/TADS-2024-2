@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Relatórios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-zinc-900 text-white flex items-center justify-center min-h-screen"
+  >
+    <div class="w-full max-w-md text-center">
+      <div class="bg-zinc-800 shadow-lg rounded-lg px-8 pt-6 pb-8">
+        <h1 class="text-4xl font-bold text-green-500 mb-6">Acesso Permitido</h1>
+
+        <p class="text-lg text-zinc-300 mb-4">
+          Bem-vindo(a),
+          <span class="font-semibold text-white"><%= user.name %></span>
+        </p>
+        <p class="text-md text-zinc-400">
+          Você pode acessar os relatórios. Utilize os menus ou recursos
+          disponíveis para explorar os dados.
+        </p>
+
+        <div class="mt-6">
+          <a
+            href="/home"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+          >
+            Voltar ao Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

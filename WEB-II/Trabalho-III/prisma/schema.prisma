@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../dados.db"
+}
+
+model Module {
+  id    Int          @id @default(autoincrement())
+  name  String       @unique
+  path  String?
+  roles UserModule[]
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  email    String  @unique
+  password String
+  avatar   String? @default("4e6d1087817f1ab2079a83a002644a84")
+  role     String  @default("Usuário")
+
+  userModule UserModule[]
+
+  log log[]
+}
+
+model UserModule {
+  userId   Int
+  User     User   @relation(fields: [userId], references: [id])
+  moduleId Int
+  Module   Module @relation(fields: [moduleId], references: [id])
+
+  @@id([userId, moduleId])
+}
+
+model log {
+  id     Int    @id @default(autoincrement())
+  action String
+  module String
+  userId Int
+  User   User   @relation(fields: [userId], references: [id])
+}
