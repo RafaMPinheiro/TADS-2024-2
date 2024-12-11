@@ -5,8 +5,11 @@ import bcrypt from "bcrypt";
 import "dotenv/config";
 
 import { isAuth } from "./middlewares/is-auth.js";
+import loginRoutes from "./routes/auth/login.js";
+import logoutRoute from "./routes/auth/logout.js";
+import usersRoutes from "./routes/users/register.js";
 
-const prisma = new PrismaClient({
+export const prisma = new PrismaClient({
   log: ["query", "info", "warn", "error"],
 });
 
@@ -59,65 +62,9 @@ app.get("/home", (req, res) => {
   res.render("home", { user: req.session.user });
 });
 
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  console.log({ email, password });
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (!user) {
-    return res.status(400).json({ error: "Invalid credentials" });
-  }
-
-  const isValid = bcrypt.compareSync(password, user.password);
-  if (!isValid) {
-    return res.status(400).json({ error: "Invalid credentials" });
-  }
-
-  const userSession = {
-    userId: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  };
-
-  req.session.user = userSession;
-  res.redirect("/home");
-});
-
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-
-app.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-  const encrypted = bcrypt.hashSync(password, 10);
-
-  console.log({ name, email, encrypted });
-
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: encrypted,
-    },
-  });
-
-  res.redirect("/login");
-});
-
-app.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.redirect("/home");
-});
+app.use(loginRoutes);
+app.use(logoutRoute);
+app.use("/users", usersRoutes);
 
 app.get("/users", isAuth, async (req, res) => {
   const users = await prisma.user.findMany();
