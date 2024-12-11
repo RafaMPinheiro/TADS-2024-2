@@ -119,9 +119,13 @@
               >
                 <% modules.forEach(module => { %>
                 <div class="flex items-center mb-2">
-                  <input type="checkbox" id="module-<%= module.id %>"
-                  name="modules" value="<%= module.id %>" class="mr-2" <%=
-                  module.name === "Perfil" ? "checked" : "" %> />
+                  <input
+                    type="checkbox"
+                    id="module-<%= module.id %>"
+                    name="modules"
+                    value="<%= module.id %>"
+                    class="mr-2"
+                  />
                   <label
                     for="module-<%= module.id %>"
                     class="text-zinc-300 text-sm"
@@ -130,6 +134,8 @@
                   </label>
                 </div>
                 <% }) %>
+                <input type="hidden" name="modules" id="module-1" value="1" />
+                <input type="hidden" name="modules" id="module-2" value="2" />
               </div>
             </div>
           </div>

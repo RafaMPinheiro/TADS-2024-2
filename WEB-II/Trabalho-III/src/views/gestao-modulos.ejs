@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciar Permissões</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-zinc-900 text-white flex items-center justify-center min-h-screen"
+  >
+    <div class="w-full max-w-3xl">
+      <div class="bg-zinc-800 shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+        <h1 class="text-3xl font-bold mb-6">
+          Gerenciar Permissões de <%= user.name %>
+        </h1>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div>
+            <p class="text-lg font-semibold">ID:</p>
+            <p class="text-zinc-400"><%= user.id %></p>
+          </div>
+          <div>
+            <p class="text-lg font-semibold">Nome:</p>
+            <p class="text-zinc-400"><%= user.name %></p>
+          </div>
+          <div class="sm:col-span-2">
+            <p class="text-lg font-semibold">Email:</p>
+            <p class="text-zinc-400"><%= user.email %></p>
+          </div>
+        </div>
+
+        <h2 class="text-xl font-bold mb-4">Permissões:</h2>
+        <ul class="list-disc list-inside space-y-2 mb-6">
+          <form action="/atualizarModulos" method="POST" class="inline">
+            <input type="hidden" name="id" value="<%= user.id %>" />
+            <% modules.forEach(module => { %>
+            <li class="flex justify-between items-center">
+              <label for="module-<%= module.id %>" class="text-zinc-400">
+                <%= module.name %>
+              </label>
+
+              <input type="checkbox" id="module-<%= module.id %>" name="modules"
+              value="<%= module.id %>" class="mr-2" <%= module.checked ?
+              "checked" : "" %> />
+            </li>
+            <% }); %>
+            
+            <input type="hidden" name="modules" id="module-1" value="1" />
+            <input type="hidden" name="modules" id="module-2" value="2" />
+
+            <button
+              type="submit"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+            >
+              Atualizar
+            </button>
+          </form>
+        </ul>
+
+        <div class="mt-6 flex justify-end">
+          <a
+            href="/home"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+          >
+            Voltar ao Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

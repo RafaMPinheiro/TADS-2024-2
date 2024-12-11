@@ -48,6 +48,31 @@
           </ul>
         </div>
 
+        <div class="mt-6">
+          <h2 class="text-xl font-bold mb-2">Alterar Avatar:</h2>
+          <form
+            action="/atualizarAvatar"
+            method="POST"
+            enctype="multipart/form-data"
+          >
+            <div class="flex items-center space-x-4">
+              <input
+                class="bg-zinc-700 border border-zinc-600 text-zinc-300 rounded w-full py-2 px-3 focus:outline-none focus:shadow-outline"
+                id="avatar"
+                type="file"
+                name="avatar"
+                required
+              />
+              <button
+                type="submit"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg"
+              >
+                Atualizar
+              </button>
+            </div>
+          </form>
+        </div>
+
         <div class="mt-6 flex justify-end">
           <a
             href="/home"

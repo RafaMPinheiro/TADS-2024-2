@@ -20,11 +20,13 @@
           >
             <thead class="bg-zinc-700 text-zinc-300 uppercase">
               <tr>
-                <th class="py-3 px-5 text-center">Avatar</th>
-                <th class="py-3 px-5">ID</th>
-                <th class="py-3 px-5">Nome</th>
-                <th class="py-3 px-5">Email</th>
-                <th class="py-3 px-5">Permissões</th>
+                <th class="p-3 text-center">Avatar</th>
+                <th class="p-3">ID</th>
+                <th class="p-3">Nome</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Permissões</th>
+                <th class="p-3">Ações</th>
               </tr>
             </thead>
             <tbody class="text-zinc-400">
@@ -32,17 +34,18 @@
               <tr
                 class="border-b border-zinc-600 hover:bg-zinc-700 transition-colors"
               >
-                <td class="py-3 px-5 text-center">
+                <td class="p-3 text-center">
                   <img
                     src="<%= user.avatar %>"
                     alt="<%= user.name %>"
                     class="w-12 h-12 rounded-full mx-auto"
                   />
                 </td>
-                <td class="py-3 px-5 whitespace-nowrap"><%= user.id %></td>
-                <td class="py-3 px-5"><%= user.name %></td>
-                <td class="py-3 px-5"><%= user.email %></td>
-                <td class="py-3 px-5">
+                <td class="p-3 whitespace-nowrap"><%= user.id %></td>
+                <td class="p-3"><%= user.name %></td>
+                <td class="p-3"><%= user.email %></td>
+                <td class="p-3"><%= user.role %></td>
+                <td class="p-3">
                   <% user.modules.forEach(module => { %>
                   <span
                     class="block bg-zinc-700 text-zinc-300 py-1 px-2 rounded-lg text-xs font-medium mb-1"
@@ -51,7 +54,25 @@
                   </span>
                   <% }); %>
                 </td>
+                <td class="p-3">
+                  <% if (userSession.role === "Super Usuário") { %>
+                  <a
+                    href="/gestaoModulos/<%= user.id %>"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                  >
+                    Editar Permissões
+                  </a>
+                  <% } else if (user.role === "Usuário") { %>
+                  <a
+                    href="/gestaoModulos/<%= user.id %>"
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+                  >
+                    Editar Permissões
+                  </a>
+                  <% } %>
+                </td>
               </tr>
+
               <% }); %>
             </tbody>
           </table>

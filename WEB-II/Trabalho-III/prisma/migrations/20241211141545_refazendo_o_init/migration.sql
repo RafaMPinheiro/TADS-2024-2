@@ -25,6 +25,15 @@ CREATE TABLE "UserModule" (
     CONSTRAINT "UserModule_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "log" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "action" TEXT NOT NULL,
+    "module" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    CONSTRAINT "log_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Module_name_key" ON "Module"("name");
 

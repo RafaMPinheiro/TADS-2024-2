@@ -1,3 +1,4 @@
+import fs from "fs";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 
@@ -34,7 +35,7 @@ async function paginaGestaoUsuario(req, res) {
     modules: user.userModule.map((userModule) => userModule.Module),
   }));
 
-  res.render("gestao-usuario", { users });
+  res.render("gestao-usuario", { users, userSession: req.session.user });
 }
 
 async function paginaRegistrarUsuario(req, res) {
@@ -65,7 +66,9 @@ async function paginaRegistrarUsuario(req, res) {
 
 const registrarUsuario = async (req, res) => {
   try {
-    const { name, email, password, role, modules } = req.body;
+    const { name, email, password, role, modules: rawModules } = req.body;
+
+    let modules = rawModules;
 
     const avatar = req.file.filename;
 
@@ -82,11 +85,9 @@ const registrarUsuario = async (req, res) => {
       },
     });
 
-    if (role === "Administrador") {
-      modules.push("1");
+    if (role === "Usuário") {
+      modules = rawModules.filter((module) => module !== "1");
     }
-
-    modules.push("2");
 
     await prisma.userModule.createMany({
       data: modules.map((module) => ({
@@ -101,6 +102,94 @@ const registrarUsuario = async (req, res) => {
     res.status(500).send("Erro interno no servidor.");
   }
 };
+
+async function paginaGestaoModulos(req, res) {
+  const userRaw = await prisma.user.findUnique({
+    where: {
+      id: Number(req.params.id),
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      role: true,
+      userModule: {
+        select: {
+          Module: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const userModulesIds = userRaw.userModule.map((e) => e.Module.id);
+
+  const modulesRaw = await prisma.module.findMany({
+    where: {
+      name: {
+        notIn: ["Perfil", "Gestão de Usuários"],
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const modules = modulesRaw.map((module) => ({
+    ...module,
+    checked: userModulesIds.includes(module.id),
+  }));
+
+  const user = {
+    id: userRaw.id,
+    name: userRaw.name,
+    email: userRaw.email,
+    avatar: userRaw.avatar,
+    role: userRaw.role,
+  };
+
+  console.log({ user, modules });
+
+  res.render("gestao-modulos", { user, modules });
+}
+
+async function atualizarModulos(req, res) {
+  const { id, modules } = req.body;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(id),
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  await prisma.userModule.deleteMany({
+    where: {
+      userId: Number(id),
+    },
+  });
+
+  if (user.role !== "Administrador") {
+    modules.filter((module) => module !== "1");
+  }
+
+  await prisma.userModule.createMany({
+    data: modules.map((module) => ({
+      userId: Number(id),
+      moduleId: Number(module),
+    })),
+  });
+
+  res.redirect("/gestaoUsuario");
+}
 
 async function paginaPerfil(req, res) {
   const id = req.session.user.userId;
@@ -138,9 +227,46 @@ async function paginaPerfil(req, res) {
   res.render("perfil", { user });
 }
 
+async function atualizarAvatar(req, res) {
+  const id = req.session.user.userId;
+
+  const avatar = req.file.filename;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      avatar: true,
+    },
+  });
+
+  if (user.avatar) {
+    fs.unlink(`uploads/${user.avatar}`, (err) => {
+      if (err) {
+        console.error("Erro ao deletar avatar antigo:", err);
+      }
+    });
+  }
+
+  await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      avatar,
+    },
+  });
+
+  res.redirect("/perfil");
+}
+
 export {
   paginaGestaoUsuario,
-  paginaPerfil,
   paginaRegistrarUsuario,
   registrarUsuario,
+  paginaGestaoModulos,
+  atualizarModulos,
+  paginaPerfil,
+  atualizarAvatar,
 };
