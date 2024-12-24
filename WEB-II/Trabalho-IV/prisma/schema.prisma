@@ -11,8 +11,47 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String
-  password String
+  id                    String  @id @default(cuid())
+  nome                  String
+  email                 String  @unique
+  senha                 String
+  emailVerificado       Boolean @default(false)
+  emailVerificacaoToken String?
+
+  todos                    Todo[]
+  categorias               Categoria[]
+  categoriasCompartilhadas CategoriasCompartilhadas[]
+}
+
+model Todo {
+  id                String    @id @default(cuid())
+  titulo            String
+  descricao         String?
+  previsaoConclusao DateTime?
+  concluida         Boolean   @default(false)
+  criadoEm          DateTime  @default(now())
+
+  categoriaId String?
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id])
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+}
+
+model Categoria {
+  id   String @id @default(cuid())
+  nome String
+
+  todos                  Todo[]
+  usuariosCompartilhados CategoriasCompartilhadas[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model CategoriasCompartilhadas {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  categoriaId String
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
 }

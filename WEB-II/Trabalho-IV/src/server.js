@@ -1,8 +1,15 @@
 import express from "express";
+import dotenv from "dotenv";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
+dotenv.config();
+
+import { authRouter } from "./routes/auth-routes.js";
+import { todoRouter } from "./routes/todo-routes.js";
+
 const app = express();
+app.use(express.json());
 
 const options = {
   definition: {
@@ -12,16 +19,19 @@ const options = {
       version: "0.0.1-SNAPSHOT",
     },
   },
-  apis: ["./src/*.js"],
+  apis: ["./src/*.js", "./src/routes/*.js"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.redirect("/api-docs");
 });
 
+app.use(authRouter);
+app.use(todoRouter);
+
 app.listen(process.env.PORT, () => {
-  console.log("Server is running on port 3000");
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
