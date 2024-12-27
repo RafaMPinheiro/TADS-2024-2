@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -5,34 +6,41 @@ const prisma = new PrismaClient();
 export const autorTodo = () => async (req, res, next) => {
   try {
     const { id } = req.params;
-    const usuarioId = req.usuario.id;
+    const jwtToken = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(jwtToken).id;
 
     const todo = await prisma.todo.findUnique({
       where: {
-        id: parseInt(id),
+        id,
       },
       include: {
-        categoria: true,
+        categoria: {
+          include: {
+            usuariosCompartilhados: true,
+          },
+        },
       },
     });
 
+    console.log(todo);
+
     if (!todo) {
-      res.status(404).json({ error: "Todo não encontrado." });
+      return res.status(404).json({ error: "Todo não encontrado." });
     }
 
     const hasAccess =
-      todo.userId === usuarioId ||
+      todo.userId === userId ||
       todo.categoria.usuariosCompartilhados.some(
-        (sharedUser) => sharedUser.userId === usuarioId
+        (usuario) => usuario.id === userId
       );
 
     if (!hasAccess) {
-      res.status(403).json({ error: "Acesso negado." });
+      return res.status(403).json({ error: "Acesso negado." });
     }
 
     next();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
+    return res.status(500).json({ error: "Erro interno no servidor." });
   }
 };

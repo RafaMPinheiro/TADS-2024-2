@@ -11,6 +11,13 @@ import {
 
 export const authRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Gerenciamento de autenticação
+ */
+
 const userSchema = z.object({
   nome: z
     .string({ required_error: "O nome é obrigatório" })
@@ -29,6 +36,7 @@ const userSchema = z.object({
  *   post:
  *     summary: Rota de cadastro de usuário
  *     description: Permite cadastrar um novo usuário no sistema.
+ *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -106,6 +114,7 @@ const verificacaoSchema = z.object({
  *   post:
  *     summary: Rota de verificação de email
  *     description: Permite verificar o email do usuário usando um token de verificação.
+ *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
@@ -178,6 +187,7 @@ authRouter.post(
  *   post:
  *     summary: Rota de login do usuário
  *     description: Permite autenticar um usuário no sistema.
+ *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:

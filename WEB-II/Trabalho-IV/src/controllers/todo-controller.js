@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -5,15 +6,39 @@ const prisma = new PrismaClient();
 async function createTodo(req, res) {
   try {
     const { titulo, descricao, previsaoConclusao, categoriaId } = req.body;
+    const jwtToken = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(jwtToken).id;
 
-    const existeCategoria = await prisma.categoria.findFirst({
-      where: {
-        id: categoriaId,
-      },
-    });
+    if (categoriaId) {
+      const existeCategoria = await prisma.categoria.findFirst({
+        where: {
+          id: categoriaId,
+        },
+      });
 
-    if (!existeCategoria) {
-      res.status(400).json({ error: "Categoria não encontrada." });
+      if (!existeCategoria) {
+        return res.status(400).json({ error: "Categoria não encontrada." });
+      }
+
+      const todo = await prisma.todo.create({
+        data: {
+          titulo,
+          descricao,
+          previsaoConclusao,
+          categoriaId,
+          userId,
+        },
+      });
+
+      return res.status(201).json({
+        message: "Todo registrado com sucesso.",
+        todo: {
+          titulo: todo.titulo,
+          descricao: todo.descricao,
+          previsaoConclusao: todo.previsaoConclusao,
+          categoriaId: existeCategoria.nome,
+        },
+      });
     }
 
     const todo = await prisma.todo.create({
@@ -21,23 +46,21 @@ async function createTodo(req, res) {
         titulo,
         descricao,
         previsaoConclusao,
-        categoriaId,
-        userId: req.user.id,
+        userId,
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Todo registrado com sucesso.",
       todo: {
         titulo: todo.titulo,
         descricao: todo.descricao,
         previsaoConclusao: todo.previsaoConclusao,
-        categoriaId: existeCategoria.nome,
       },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
+    return res.status(500).json({ error: "Erro interno no servidor." });
   }
 }
 
@@ -47,54 +70,33 @@ async function deleteTodo(req, res) {
 
     await prisma.todo.delete({
       where: {
-        id: parseInt(id),
-        userId: req.user.id,
+        id,
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Todo deletado com sucesso.",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
-  }
-}
-
-async function getTodo(req, res) {
-  try {
-    const { id } = req.params;
-
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-    });
-
-    if (!todo) {
-      return res.status(404).json({ error: "Todo não encontrado." });
-    }
-
-    res.status(200).json({
-      todo,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
+    return res.status(500).json({ error: "Erro interno no servidor." });
   }
 }
 
 async function getTodos(req, res) {
   try {
+    const jwtToken = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(jwtToken).id;
+
     const todos = await prisma.todo.findMany({
       where: {
         OR: [
-          { userId: usuarioId },
+          { userId },
           {
             categoria: {
               usuariosCompartilhados: {
                 some: {
-                  userId: usuarioId,
+                  userId,
                 },
               },
             },
@@ -106,12 +108,12 @@ async function getTodos(req, res) {
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       todos,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
+    return res.status(500).json({ error: "Erro interno no servidor." });
   }
 }
 
@@ -123,7 +125,7 @@ async function updateTodo(req, res) {
 
     const todo = await prisma.todo.update({
       where: {
-        id: parseInt(id),
+        id: id,
       },
       data: {
         titulo,
@@ -134,14 +136,14 @@ async function updateTodo(req, res) {
       },
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Todo atualizado com sucesso.",
       todo,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro interno no servidor." });
+    return res.status(500).json({ error: "Erro interno no servidor." });
   }
 }
 
-export { createTodo, deleteTodo, getTodo, getTodos, updateTodo };
+export { createTodo, deleteTodo, getTodos, updateTodo };

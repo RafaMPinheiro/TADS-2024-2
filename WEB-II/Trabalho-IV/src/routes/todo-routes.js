@@ -4,7 +4,6 @@ import { Router } from "express";
 import {
   createTodo,
   deleteTodo,
-  getTodo,
   getTodos,
   updateTodo,
 } from "../controllers/todo-controller.js";
@@ -14,12 +13,19 @@ import { autorTodo } from "../middlewares/autor-todo.js";
 
 export const todoRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: To-dos
+ *   description: Gerenciamento de to-dos
+ */
+
 const todoSchema = z.object({
   titulo: z.string().nonempty(),
   descricao: z.string().optional(),
-  previsaoConclusao: z.date().optional(),
+  previsaoConclusao: z.string().optional(),
   concluida: z.boolean().optional(),
-  categoriaId: z.number().optional(),
+  categoriaId: z.string().optional(),
 });
 
 /**
@@ -28,6 +34,7 @@ const todoSchema = z.object({
  *   post:
  *     summary: Rota para criar uma nova tarefa
  *     description: Permite criar uma nova tarefa no sistema.
+ *     tags: [To-dos]
  *     requestBody:
  *       required: true
  *       content:
@@ -114,6 +121,7 @@ todoRouter.post("/todos", validarBody(todoSchema), createTodo);
  *   delete:
  *     summary: Rota para deletar uma tarefa
  *     description: Permite deletar uma tarefa existente pelo ID.
+ *     tags: [To-dos]
  *     parameters:
  *       - name: id
  *         in: path
@@ -164,65 +172,53 @@ todoRouter.post("/todos", validarBody(todoSchema), createTodo);
  *                   type: string
  *                   example: "Erro interno no servidor."
  */
-
-todoRouter.delete("/todos/:id", autorTodo, deleteTodo);
-
-todoRouter.get("/todos", getTodos);
+todoRouter.delete("/todos/:id", autorTodo(), deleteTodo);
 
 /**
  * @openapi
- * /todos/{id}:
+ * /todos:
  *   get:
- *     summary: Rota para obter uma tarefa específica
- *     description: Permite obter os detalhes de uma tarefa pelo ID.
- *     parameters:
- *       - name: id
- *         in: path
- *         required: true
- *         description: ID da tarefa a ser obtida.
- *         schema:
- *           type: integer
- *           example: 1
+ *     summary: Rota para listar todas as tarefas
+ *     description: Retorna todas as tarefas associadas ao usuário autenticado.
+ *     tags: [To-dos]
  *     responses:
  *       200:
- *         description: Retorna os detalhes da tarefa.
+ *         description: Lista de tarefas retornada com sucesso.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 todo:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 1
- *                     titulo:
- *                       type: string
- *                       example: "Comprar leite"
- *                     descricao:
- *                       type: string
- *                       example: "Comprar leite no supermercado"
- *                     previsaoConclusao:
- *                       type: string
- *                       format: date-time
- *                       example: "2023-10-30T10:00:00Z"
- *                     concluida:
- *                       type: boolean
- *                       example: false
- *                     categoriaId:
- *                       type: integer
- *                       example: 1
- *       404:
- *         description: Retorna uma mensagem de erro caso a tarefa não seja encontrada.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Todo não encontrado."
+ *                 todos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       titulo:
+ *                         type: string
+ *                         example: "Comprar leite"
+ *                       descricao:
+ *                         type: string
+ *                         example: "Comprar leite no supermercado"
+ *                       previsaoConclusao:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2023-10-30T10:00:00Z"
+ *                       concluida:
+ *                         type: boolean
+ *                         example: false
+ *                       categoriaId:
+ *                         type: integer
+ *                         example: 1
+ *                       categoria:
+ *                         type: object
+ *                         properties:
+ *                           nome:
+ *                             type: string
+ *                             example: "Alimentação"
  *       500:
  *         description: Erro interno no servidor.
  *         content:
@@ -234,7 +230,7 @@ todoRouter.get("/todos", getTodos);
  *                   type: string
  *                   example: "Erro interno no servidor."
  */
-todoRouter.get("/todos/:id", getTodo);
+todoRouter.get("/todos", getTodos);
 
 /**
  * @openapi
@@ -242,6 +238,7 @@ todoRouter.get("/todos/:id", getTodo);
  *   put:
  *     summary: Rota para atualizar uma tarefa
  *     description: Permite atualizar os detalhes de uma tarefa existente pelo ID.
+ *     tags: [To-dos]
  *     parameters:
  *       - name: id
  *         in: path
@@ -352,4 +349,4 @@ todoRouter.get("/todos/:id", getTodo);
  *                   type: string
  *                   example: "Erro interno no servidor."
  */
-todoRouter.put("/todos/:id", autorTodo, updateTodo);
+todoRouter.put("/todos/:id", autorTodo(), updateTodo);

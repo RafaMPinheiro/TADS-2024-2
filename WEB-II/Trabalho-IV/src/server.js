@@ -7,6 +7,7 @@ dotenv.config();
 
 import { authRouter } from "./routes/auth-routes.js";
 import { todoRouter } from "./routes/todo-routes.js";
+import { categoriasRouter } from "./routes/categorias-routes.js";
 
 const app = express();
 app.use(express.json());
@@ -19,7 +20,7 @@ const options = {
       version: "0.0.1-SNAPSHOT",
     },
   },
-  apis: ["./src/*.js", "./src/routes/*.js"],
+  apis: ["./src/routes/*.js"],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 
 app.use(authRouter);
 app.use(todoRouter);
+app.use(categoriasRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
